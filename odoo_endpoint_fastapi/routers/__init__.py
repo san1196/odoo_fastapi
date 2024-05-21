@@ -1,0 +1,1 @@
+from .odoo_auth_endpoint import router as odoo_auth_endpoint
