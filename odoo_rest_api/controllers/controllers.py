@@ -8,7 +8,7 @@ from datetime import datetime
 
 class OdooAPIController(http.Controller):
 
-    @http.route('/api/user/profile', type='http', auth='user', methods=['GET'])
+    @http.route('/web/user/profile', type='http', auth='user')
     def get_profile(self, **kw):
         if not request.session.uid:
             return {'error': 'User not logged in'}
@@ -26,7 +26,7 @@ class OdooAPIController(http.Controller):
         json_data.append(user_info)
         return json.dumps(json_data)
 
-    @http.route('/api/attendance/checkin', type='json', auth='user', methods=['POST'], csrf=False)
+    @http.route('/web/attendance/checkin', type='json', auth='user', methods=['POST'], csrf=False)
     def checkin(self, **kw):
         data = json.loads(http.request.httprequest.data)
         employee_id = data.get('employee_id')
@@ -47,7 +47,7 @@ class OdooAPIController(http.Controller):
         })
         return {'status': 'success', 'attendance_id': attendance.id, 'message': 'Checked in successfully'}
 
-    @http.route('/api/attendance/checkout', type='json', auth='user', methods=['POST'], csrf=False)
+    @http.route('/web/attendance/checkout', type='json', auth='user', methods=['POST'], csrf=False)
     def checkout(self, **kw):
         data = json.loads(http.request.httprequest.data)
         employee_id = data.get('employee_id')
