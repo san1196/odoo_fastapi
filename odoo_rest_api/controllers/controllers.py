@@ -4,7 +4,7 @@ from odoo.http import request
 import base64
 import json
 import requests
-from datetime import datetime
+from datetime import date, timedelta, datetime
 
 class OdooAPIController(http.Controller):
 
@@ -30,7 +30,7 @@ class OdooAPIController(http.Controller):
     def checkin(self, **kw):
         data = json.loads(http.request.httprequest.data)
         employee_id = data.get('employee_id')
-        time_check_in = data.get('check_in')
+        time_check_in = data.get('check_in') - timedelta(hours=7)
         if not employee_id:
             return {'status': 'error', 'message': 'employee_id is required'}
 
@@ -51,7 +51,7 @@ class OdooAPIController(http.Controller):
     def checkout(self, **kw):
         data = json.loads(http.request.httprequest.data)
         employee_id = data.get('employee_id')
-        time_check_out = data.get('check_out')
+        time_check_out = data.get('check_out') - timedelta(hours=7)
         if not employee_id:
             return {'status': 'error', 'message': 'employee_id is required'}
 
