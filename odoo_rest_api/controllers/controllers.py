@@ -12,7 +12,6 @@ class OdooAPIController(http.Controller):
     def get_profile(self, **kw):
         if not request.session.uid:
             return {'error': 'User not logged in'}
-        json_data = []
         user = request.env.user
         employee_id = request.env['hr.employee'].search([('user_id', '=', user.id)])
         user_info = {
@@ -23,14 +22,12 @@ class OdooAPIController(http.Controller):
             'employee_id': employee_id.id,
             'groups': [group.name for group in user.groups_id],
         }
-        json_data.append(user_info)
-        return json.dumps(json_data)
+        return json.dumps(user_info)
 
     @http.route('/web/today/check_in_out', type='http', auth='user')
     def get_today_check_in_out(self, **kw):
         if not request.session.uid:
             return {'error': 'User not logged in'}
-        json_data = []
         user = request.env.user
         employee_id = request.env['hr.employee'].search([('user_id', '=', user.id)])
         date_today = date.today()
@@ -42,8 +39,7 @@ class OdooAPIController(http.Controller):
             'login': user.login,
             'employee_id': employee_id.id,
         }
-        json_data.append(user_info)
-        return json.dumps(json_data)
+        return json.dumps(user_info)
 
     @http.route('/web/attendance/checkin', type='json', auth='user', methods=['POST'], csrf=False)
     def checkin(self, **kw):
