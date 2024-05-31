@@ -26,13 +26,32 @@ class OdooAPIController(http.Controller):
         json_data.append(user_info)
         return json.dumps(json_data)
 
+    @http.route('/web/today/check_in_out', type='http', auth='user')
+    def get_today_check_in_out(self, **kw):
+        if not request.session.uid:
+            return {'error': 'User not logged in'}
+        json_data = []
+        user = request.env.user
+        employee_id = request.env['hr.employee'].search([('user_id', '=', user.id)])
+        date_today = date.today()
+        attendance = request.env['hr.attendance'].search([('employee_id', '=', employee_id.id), ('check_in', '>=', date_today)])
+        user_info = {
+            'date': str(date_today),
+            'checkin': str(attendance.check_in),
+            'checkout': str(attendance.check_out),
+            'login': user.login,
+            'employee_id': employee_id.id,
+        }
+        json_data.append(user_info)
+        return json.dumps(json_data)
+
     @http.route('/web/attendance/checkin', type='json', auth='user', methods=['POST'], csrf=False)
     def checkin(self, **kw):
         data = json.loads(http.request.httprequest.data)
         employee_id = data.get('employee_id')
         date_format = "%Y-%m-%d %H:%M:%S"
         date_obj = datetime.strptime(data.get('check_in'), date_format)
-        time_check_in = date_obj - timedelta(hours=7)
+        time_check_in = date_obj
         if not employee_id:
             return {'status': 'error', 'message': 'employee_id is required'}
 
@@ -55,7 +74,7 @@ class OdooAPIController(http.Controller):
         employee_id = data.get('employee_id')
         date_format = "%Y-%m-%d %H:%M:%S"
         date_obj = datetime.strptime(data.get('check_out'), date_format)
-        time_check_out = date_obj - timedelta(hours=7)
+        time_check_out = date_obj
         if not employee_id:
             return {'status': 'error', 'message': 'employee_id is required'}
 
