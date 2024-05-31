@@ -30,7 +30,9 @@ class OdooAPIController(http.Controller):
     def checkin(self, **kw):
         data = json.loads(http.request.httprequest.data)
         employee_id = data.get('employee_id')
-        time_check_in = data.get('check_in') - timedelta(hours=7)
+        date_format = "%Y-%m-%d %H:%M:%S"
+        date_obj = datetime.strptime(data.get('check_in'), date_format)
+        time_check_in = date_obj - timedelta(hours=7)
         if not employee_id:
             return {'status': 'error', 'message': 'employee_id is required'}
 
@@ -51,7 +53,9 @@ class OdooAPIController(http.Controller):
     def checkout(self, **kw):
         data = json.loads(http.request.httprequest.data)
         employee_id = data.get('employee_id')
-        time_check_out = data.get('check_out') - timedelta(hours=7)
+        date_format = "%Y-%m-%d %H:%M:%S"
+        date_obj = datetime.strptime(data.get('check_out'), date_format)
+        time_check_out = date_obj - timedelta(hours=7)
         if not employee_id:
             return {'status': 'error', 'message': 'employee_id is required'}
 
