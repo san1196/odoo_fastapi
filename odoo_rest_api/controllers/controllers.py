@@ -50,7 +50,6 @@ class OdooAPIController(http.Controller):
         date_format = "%Y-%m-%d %H:%M:%S"
         date_obj = datetime.strptime(data.get('check_in'), date_format)
         time_check_in = date_obj
-        self.ensure_one()
         geolocator = Nominatim(user_agent='my-app')
         latitudes = data.get('latitudes')
         longitudes = data.get('longitudes')
@@ -82,7 +81,6 @@ class OdooAPIController(http.Controller):
         date_format = "%Y-%m-%d %H:%M:%S"
         date_obj = datetime.strptime(data.get('check_out'), date_format)
         time_check_out = date_obj
-        self.ensure_one()
         geolocator = Nominatim(user_agent='my-app')
         latitudes = data.get('latitudes')
         longitudes = data.get('longitudes')
