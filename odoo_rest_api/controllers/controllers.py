@@ -5,6 +5,8 @@ import base64
 import json
 import requests
 from datetime import date, timedelta, datetime
+from geopy.geocoders import Nominatim
+
 
 class OdooAPIController(http.Controller):
 
@@ -48,6 +50,11 @@ class OdooAPIController(http.Controller):
         date_format = "%Y-%m-%d %H:%M:%S"
         date_obj = datetime.strptime(data.get('check_in'), date_format)
         time_check_in = date_obj
+        self.ensure_one()
+        geolocator = Nominatim(user_agent='my-app')
+        latitudes = data.get('latitudes')
+        longitudes = data.get('longitudes')
+        location = geolocator.reverse(str(latitudes) + ', ' + str(longitudes))
         if not employee_id:
             return {'status': 'error', 'message': 'employee_id is required'}
 
@@ -61,6 +68,10 @@ class OdooAPIController(http.Controller):
         attendance = request.env['hr.attendance'].sudo().create({
             'employee_id': employee.id,
             'check_in': time_check_in,
+            'checkin_address': location.address,
+            'checkin_latitude': latitudes,
+            'checkin_longitude': longitudes,
+            'checkin_location': 'https://www.google.com/maps/place/' + location.address,
         })
         return {'status': 'success', 'attendance_id': attendance.id, 'message': 'Checked in successfully'}
 
@@ -71,6 +82,11 @@ class OdooAPIController(http.Controller):
         date_format = "%Y-%m-%d %H:%M:%S"
         date_obj = datetime.strptime(data.get('check_out'), date_format)
         time_check_out = date_obj
+        self.ensure_one()
+        geolocator = Nominatim(user_agent='my-app')
+        latitudes = data.get('latitudes')
+        longitudes = data.get('longitudes')
+        location = geolocator.reverse(str(latitudes) + ', ' + str(longitudes))
         if not employee_id:
             return {'status': 'error', 'message': 'employee_id is required'}
 
@@ -88,5 +104,11 @@ class OdooAPIController(http.Controller):
         if not attendance:
             return {'status': 'error', 'message': 'No active check-in found'}
 
-        attendance.sudo().write({'check_out': time_check_out})
+        attendance.sudo().write({
+            'check_out': time_check_out,
+            'checkout_address': location.address,
+            'checkout_latitude': latitudes,
+            'checkout_longitude': longitudes,
+            'checkout_location': 'https://www.google.com/maps/place/' + location.address,
+        })
         return {'status': 'success', 'attendance_id': attendance.id, 'message': 'Checked out successfully'}
