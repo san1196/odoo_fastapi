@@ -44,6 +44,40 @@ class OdooAPIController(http.Controller):
         }
         return json.dumps(user_info)
 
+    @http.route('/web/attendance/user_attend', type='http', auth='user')
+    def get_today_check_in_out(self, **kw):
+        if not request.session.uid:
+            return {'error': 'User not logged in'}
+        user = request.env.user
+        employee_id = request.env['hr.employee'].search([('user_id', '=', user.id)])
+        attendance = request.env['hr.attendance'].search(
+            [('employee_id', '=', employee_id.id)])
+        data_attendance = []
+        for data in attendance:
+            work_hours_decimal = data.worked_hours
+            hours = int(work_hours_decimal)
+            minutes_decimal = (work_hours_decimal - hours) * 60
+            minutes = int(minutes_decimal)
+            seconds_decimal = (minutes_decimal - minutes) * 60
+            seconds = int(seconds_decimal)
+            time_format = "{:02d}:{:02d}:{:02d}".format(hours, minutes, seconds)
+            data_attendance.append({
+                'name': data.employee_id.name,
+                'check_in': str(data.check_in),
+                'check_out': str(data.check_out),
+                'checkin_latitude': data.checkin_latitude,
+                'checkin_longitude': data.checkin_longitude,
+                'checkout_latitude': data.checkout_latitude,
+                'checkout_longitude': data.checkout_longitude,
+                'worked_hours': time_format,
+                'checkin_location': data.checkin_location,
+                'checkout_location': data.checkout_location,
+            })
+        datas = {
+            'result': data_attendance
+        }
+        return json.dumps(datas)
+
     @http.route('/web/attendance/checkin', type='json', auth='user', methods=['POST'], csrf=False)
     def checkin(self, **kw):
         data = json.loads(http.request.httprequest.data)
