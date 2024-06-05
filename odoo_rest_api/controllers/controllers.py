@@ -6,6 +6,7 @@ import json
 import requests
 from datetime import date, timedelta, datetime
 from geopy.geocoders import Nominatim
+from odoo import exceptions, fields, models, _
 
 
 class OdooAPIController(http.Controller):
@@ -47,9 +48,9 @@ class OdooAPIController(http.Controller):
     def checkin(self, **kw):
         data = json.loads(http.request.httprequest.data)
         employee_id = data.get('employee_id')
-        date_format = "%Y-%m-%d %H:%M:%S"
-        date_obj = datetime.strptime(data.get('check_in'), date_format)
-        time_check_in = date_obj
+        # date_format = "%Y-%m-%d %H:%M:%S"
+        # date_obj = datetime.strptime(data.get('check_in'), date_format)
+        time_check_in = fields.Datetime.now()
         geolocator = Nominatim(user_agent='my-app')
         latitudes = data.get('latitudes')
         longitudes = data.get('longitudes')
@@ -78,9 +79,9 @@ class OdooAPIController(http.Controller):
     def checkout(self, **kw):
         data = json.loads(http.request.httprequest.data)
         employee_id = data.get('employee_id')
-        date_format = "%Y-%m-%d %H:%M:%S"
-        date_obj = datetime.strptime(data.get('check_out'), date_format)
-        time_check_out = date_obj
+        # date_format = "%Y-%m-%d %H:%M:%S"
+        # date_obj = datetime.strptime(data.get('check_out'), date_format)
+        time_check_out = fields.Datetime.now()
         geolocator = Nominatim(user_agent='my-app')
         latitudes = data.get('latitudes')
         longitudes = data.get('longitudes')
