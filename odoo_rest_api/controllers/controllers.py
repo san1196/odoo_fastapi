@@ -45,7 +45,7 @@ class OdooAPIController(http.Controller):
         return json.dumps(user_info)
 
     @http.route('/web/attendance/user_attend', type='http', auth='user')
-    def get_today_check_in_out(self, **kw):
+    def get_user_attend(self, **kw):
         if not request.session.uid:
             return {'error': 'User not logged in'}
         user = request.env.user
