@@ -73,10 +73,7 @@ class OdooAPIController(http.Controller):
                 'checkin_location': data.checkin_location,
                 'checkout_location': data.checkout_location,
             })
-        datas = {
-            'result': data_attendance
-        }
-        return json.dumps(datas)
+        return json.dumps(data_attendance)
 
     @http.route('/web/attendance/checkin', type='json', auth='user', methods=['POST'], csrf=False)
     def checkin(self, **kw):
