@@ -61,7 +61,10 @@ class OdooAPIController(http.Controller):
             seconds_decimal = (minutes_decimal - minutes) * 60
             seconds = int(seconds_decimal)
             time_format = "{:02d}:{:02d}:{:02d}".format(hours, minutes, seconds)
-            new_checkin = data.check_in + timedelta(hours=7)
+            if data.check_in:
+                new_checkin = data.check_in + timedelta(hours=7)
+            else:
+                new_checkin = 'False'
             if data.check_out:
                 new_checkout = data.check_out + timedelta(hours=7)
             else:
