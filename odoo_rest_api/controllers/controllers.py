@@ -61,10 +61,12 @@ class OdooAPIController(http.Controller):
             seconds_decimal = (minutes_decimal - minutes) * 60
             seconds = int(seconds_decimal)
             time_format = "{:02d}:{:02d}:{:02d}".format(hours, minutes, seconds)
+            new_checkin = data.check_in + timedelta(hours=7)
+            new_checkout = data.check_out + timedelta(hours=7)
             data_attendance.append({
                 'name': data.employee_id.name,
-                'check_in': str(data.check_in),
-                'check_out': str(data.check_out),
+                'check_in': str(new_checkin),
+                'check_out': str(new_checkout),
                 'checkin_latitude': data.checkin_latitude,
                 'checkin_longitude': data.checkin_longitude,
                 'checkout_latitude': data.checkout_latitude,
