@@ -53,7 +53,7 @@ class OdooAPIController(http.Controller):
         attendance = request.env['hr.attendance'].search(
             [('employee_id', '=', employee_id.id), ('check_in', '!=', False), ('check_out', '=', False)])
         user_info = {
-            'date': str(attendance.check_in.date()),
+            'date': str(attendance.check_in),
             'checkin': str(attendance.check_in),
             'checkout': str(attendance.check_out),
             'login': user.login,
