@@ -44,6 +44,23 @@ class OdooAPIController(http.Controller):
         }
         return json.dumps(user_info)
 
+    @http.route('/web/attendance/lost_checkout', type='http', auth='user')
+    def get_attendance_lost_checkout(self, **kw):
+        if not request.session.uid:
+            return {'error': 'User not logged in'}
+        user = request.env.user
+        employee_id = request.env['hr.employee'].search([('user_id', '=', user.id)])
+        attendance = request.env['hr.attendance'].search(
+            [('employee_id', '=', employee_id.id), ('check_in', '!=', False), ('check_out', '=', False)])
+        user_info = {
+            'date': str(attendance.check_in.date()),
+            'checkin': str(attendance.check_in),
+            'checkout': str(attendance.check_out),
+            'login': user.login,
+            'employee_id': employee_id.id,
+        }
+        return json.dumps(user_info)
+
     @http.route('/web/attendance/user_attend', type='http', auth='user')
     def get_user_attend(self, **kw):
         if not request.session.uid:
